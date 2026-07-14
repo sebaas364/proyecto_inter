@@ -19,6 +19,9 @@ public class Almacen {
 	@Column(name = "Id_almacen")
 	private Integer idAlmacen;
 	
+	@Column(name="nombre", nullable = false)
+	private String nombre;
+	
 	@Column(name = "ciudad", nullable = false)
 	private String ciudad;
 	
@@ -38,10 +41,11 @@ public class Almacen {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Almacen(Integer idAlmacen, String ciudad, String viaDireccion, String numeroDireccion,
+	public Almacen(Integer idAlmacen,String nombre, String ciudad, String viaDireccion, String numeroDireccion,
 			String complementoDireccion, List<Compra> compras) {
 		super();
 		this.idAlmacen = idAlmacen;
+		this.nombre = nombre;
 		this.ciudad = ciudad;
 		this.viaDireccion = viaDireccion;
 		this.numeroDireccion = numeroDireccion;
@@ -96,4 +100,14 @@ public class Almacen {
 	public void setCompras(List<Compra> compras) {
 		this.compras = compras;
 	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	
+	
 }

@@ -52,6 +52,14 @@ public class ClienteService {
 		}
 		return modelMapper.map(found.get(), ClienteDTO.class);
 	}
+	
+	public ClienteDTO getByCedula(String cedula) {
+		Optional<Cliente> found = clienteRepo.findByCedula(cedula);
+		if (found.isEmpty()) {
+			return null;
+		}
+		return modelMapper.map(found.get(), ClienteDTO.class);
+	}
 
 	public int update(int idPersona, ClienteDTO dto) {
 		Optional<Cliente> found = clienteRepo.findById(idPersona);

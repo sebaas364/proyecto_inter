@@ -60,6 +60,7 @@ public class SecurityConfig {
 		configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setExposedHeaders(List.of("Authorization"));
 		configuration.setAllowCredentials(true);
+		configuration.setAllowedOriginPatterns(List.of("*")); 
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

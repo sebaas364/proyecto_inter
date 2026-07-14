@@ -40,6 +40,7 @@ public class AuthController {
 					.findFirst()
 					.map(a -> a.getAuthority().replace("ROLE_", ""))
 					.orElse(null);
+			
 			return ResponseEntity.ok(new AuthResponse(jwt, rol));
 		} catch (AuthenticationException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
