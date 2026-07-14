@@ -45,9 +45,12 @@ public class SupervisorService {
 		return dtoList;
 	}
 
-	public Optional<SupervisorDTO> getById(int idPersona) {
+	public SupervisorDTO getById(int idPersona) {
 		Optional<Supervisor> found = supervisorRepo.findById(idPersona);
-		return found.map(s -> modelMapper.map(s, SupervisorDTO.class));
+		if (found.isEmpty()) {
+			return null; 
+		}
+		return modelMapper.map(found.get(), SupervisorDTO.class);
 	}
 
 	public int update(int idPersona, SupervisorDTO dto) {

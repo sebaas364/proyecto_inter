@@ -14,7 +14,4 @@ public interface RestriccionRepository extends JpaRepository<Restriccion, Restri
 
 	boolean existsByIdIdPareja(Integer idPareja);
 
-	@Query("SELECT COALESCE(MAX(r.id.idRestriccion), 0) + 1 FROM Restriccion r")
-	Integer getNextIdRestriccion();
-
 }

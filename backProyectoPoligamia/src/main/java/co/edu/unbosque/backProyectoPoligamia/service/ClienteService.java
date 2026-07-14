@@ -45,9 +45,12 @@ public class ClienteService {
 		return dtoList;
 	}
 
-	public Optional<ClienteDTO> getById(int idPersona) {
+	public ClienteDTO getById(int idPersona) {
 		Optional<Cliente> found = clienteRepo.findById(idPersona);
-		return found.map(c -> modelMapper.map(c, ClienteDTO.class));
+		if (found.isEmpty()) {
+			return null; 
+		}
+		return modelMapper.map(found.get(), ClienteDTO.class);
 	}
 
 	public int update(int idPersona, ClienteDTO dto) {

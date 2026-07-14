@@ -45,9 +45,12 @@ public class ParejaService {
 		return dtoList;
 	}
 
-	public Optional<ParejaDTO> getById(int idPersona) {
+	public ParejaDTO getById(int idPersona) {
 		Optional<Pareja> found = parejaRepo.findById(idPersona);
-		return found.map(p -> modelMapper.map(p, ParejaDTO.class));
+		if (found.isEmpty()) {
+			return null; 
+		}
+		return modelMapper.map(found.get(), ParejaDTO.class);
 	}
 
 	public int update(int idPersona, ParejaDTO dto) {
