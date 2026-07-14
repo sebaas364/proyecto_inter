@@ -10,7 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.backProyectoPoligamia.dto.ClienteDTO;
+import co.edu.unbosque.backProyectoPoligamia.dto.ClienteDashboardDTO;
+import co.edu.unbosque.backProyectoPoligamia.dto.ParejaDTO;
+import co.edu.unbosque.backProyectoPoligamia.dto.ResumenParejaDTO;
 import co.edu.unbosque.backProyectoPoligamia.model.Cliente;
+import co.edu.unbosque.backProyectoPoligamia.model.ClientePareja;
+import co.edu.unbosque.backProyectoPoligamia.repository.ClienteParejaRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteRepository;
 
 @Service
@@ -18,6 +23,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository clienteRepo;
+
+	@Autowired
+	private ClienteParejaRepository clienteParejaRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -48,17 +56,48 @@ public class ClienteService {
 	public ClienteDTO getById(int idPersona) {
 		Optional<Cliente> found = clienteRepo.findById(idPersona);
 		if (found.isEmpty()) {
-			return null; 
+			return null;
 		}
 		return modelMapper.map(found.get(), ClienteDTO.class);
 	}
-	
+
 	public ClienteDTO getByCedula(String cedula) {
 		Optional<Cliente> found = clienteRepo.findByCedula(cedula);
 		if (found.isEmpty()) {
 			return null;
 		}
 		return modelMapper.map(found.get(), ClienteDTO.class);
+	}
+
+	public ClienteDashboardDTO getDashboardByCedula(String cedula) {
+		Optional<Cliente> found = clienteRepo.findByCedula(cedula);
+		if (found.isEmpty()) {
+			return null;
+		}
+		Cliente cliente = found.get();
+
+		List<ClientePareja> relaciones = clienteParejaRepo.findByIdIdCliente(cliente.getIdPersona());
+		List<ParejaDTO> listaParejas = new ArrayList<ParejaDTO>();
+		List<ResumenParejaDTO> resumenParejas = new ArrayList<ResumenParejaDTO>();
+
+		for (ClientePareja clientePareja : relaciones) {
+			listaParejas.add(modelMapper.map(clientePareja.getPareja(), ParejaDTO.class));
+
+		}
+
+		for (ParejaDTO parejaDTO : listaParejas) {
+			resumenParejas.add(new ResumenParejaDTO(parejaDTO.getIdPersona(),
+					nombreCompleto(parejaDTO.getPrimerNombre(), parejaDTO.getSegundoNombre(),
+							parejaDTO.getPrimerApellido(), parejaDTO.getSegundoApellido()),
+					parejaDTO.getCupoCredito()));
+		}
+
+		double cupoAsignado = resumenParejas.stream().mapToDouble(ResumenParejaDTO::getCupoCredito).sum();
+
+		return new ClienteDashboardDTO(
+				cliente.getIdPersona(), nombreCompleto(cliente.getPrimerNombre(), cliente.getSegundoNombre(),
+						cliente.getPrimerApellido(), cliente.getSegundoApellido()),
+				cliente.getCupoTotalCredito(), cupoAsignado, resumenParejas);
 	}
 
 	public int update(int idPersona, ClienteDTO dto) {
@@ -98,5 +137,20 @@ public class ClienteService {
 			return 0;
 		}
 		return 1;
+	}
+
+	public String nombreCompleto(String primerNombre, String segundoNombre, String primerApellido,
+			String segundoApellido) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(primerNombre);
+
+		if (segundoNombre != null && !segundoNombre.isBlank()) {
+			sb.append(" ").append(segundoNombre);
+		}
+		sb.append(" ").append(primerApellido);
+		if (segundoApellido != null && !segundoApellido.isBlank()) {
+			sb.append(" ").append(segundoApellido);
+		}
+		return sb.toString();
 	}
 }

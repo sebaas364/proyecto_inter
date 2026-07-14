@@ -39,8 +39,9 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/**").permitAll()
+				.requestMatchers("/auth/login").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/auth/me").authenticated()
 				// Ajustar al crear controller de personas
 				.requestMatchers("/supervisor/**").hasRole("SUPERVISOR")
 				.requestMatchers("/compra/**", "/restriccion/**").hasAnyRole("PAREJA", "SUPERVISOR", "CLIENTE")
