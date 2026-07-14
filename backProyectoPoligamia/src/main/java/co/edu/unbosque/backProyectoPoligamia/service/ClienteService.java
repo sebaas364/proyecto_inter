@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.backProyectoPoligamia.dto.ClienteDTO;
 import co.edu.unbosque.backProyectoPoligamia.dto.ClienteDashboardDTO;
-import co.edu.unbosque.backProyectoPoligamia.dto.ParejaDTO;
 import co.edu.unbosque.backProyectoPoligamia.dto.ResumenParejaDTO;
 import co.edu.unbosque.backProyectoPoligamia.model.Cliente;
 import co.edu.unbosque.backProyectoPoligamia.model.ClientePareja;
+import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteParejaRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteRepository;
 
@@ -77,21 +77,17 @@ public class ClienteService {
 		Cliente cliente = found.get();
 
 		List<ClientePareja> relaciones = clienteParejaRepo.findByIdIdCliente(cliente.getIdPersona());
-		List<ParejaDTO> listaParejas = new ArrayList<ParejaDTO>();
 		List<ResumenParejaDTO> resumenParejas = new ArrayList<ResumenParejaDTO>();
 
 		for (ClientePareja clientePareja : relaciones) {
-			listaParejas.add(modelMapper.map(clientePareja.getPareja(), ParejaDTO.class));
+			Pareja pareja = clientePareja.getPareja();
 
+			resumenParejas.add(new ResumenParejaDTO(pareja.getIdPersona(),
+					nombreCompleto(pareja.getPrimerNombre(), pareja.getSegundoNombre(),
+							pareja.getPrimerApellido(), pareja.getSegundoApellido()),
+					pareja.getCupoCredito()));
 		}
-
-		for (ParejaDTO parejaDTO : listaParejas) {
-			resumenParejas.add(new ResumenParejaDTO(parejaDTO.getIdPersona(),
-					nombreCompleto(parejaDTO.getPrimerNombre(), parejaDTO.getSegundoNombre(),
-							parejaDTO.getPrimerApellido(), parejaDTO.getSegundoApellido()),
-					parejaDTO.getCupoCredito()));
-		}
-
+		
 		double cupoAsignado = resumenParejas.stream().mapToDouble(ResumenParejaDTO::getCupoCredito).sum();
 
 		return new ClienteDashboardDTO(
