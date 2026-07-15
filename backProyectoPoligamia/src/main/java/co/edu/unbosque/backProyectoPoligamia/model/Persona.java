@@ -28,7 +28,7 @@ public class Persona implements UserDetails{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_persona")
+	@Column(name = "Id_persona")
 	private Integer idPersona;
 	
 	@Column(name="cedula", nullable = false, unique = true)

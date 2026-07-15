@@ -43,6 +43,7 @@ public class SecurityConfig {
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 				.requestMatchers("/auth/me").authenticated()
 				// Ajustar al crear controller de personas
+				.requestMatchers("/cliente/createjson").hasRole("SUPERVISOR")
 				.requestMatchers("/supervisor/**").hasRole("SUPERVISOR")
 				.requestMatchers("/compra/**", "/restriccion/**").hasAnyRole("PAREJA", "SUPERVISOR", "CLIENTE")
 				.anyRequest().authenticated())
@@ -56,12 +57,11 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("*"));
+		configuration.setAllowedOrigins(List.of("*")); //http://localhost:4200
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setExposedHeaders(List.of("Authorization"));
 		configuration.setAllowCredentials(true);
-		configuration.setAllowedOriginPatterns(List.of("*")); 
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

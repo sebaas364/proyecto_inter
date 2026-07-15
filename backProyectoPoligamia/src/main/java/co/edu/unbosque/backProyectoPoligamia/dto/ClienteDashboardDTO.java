@@ -8,17 +8,21 @@ public class ClienteDashboardDTO {
 	private String nombreCompleto;
 	private double cupoTotalCredito;
 	private double cupoAsignado;
+	private double gastoTotal;
+	private double cupoDisponibleTotal;
 	private List<ResumenParejaDTO> parejas;
 
 	public ClienteDashboardDTO() {
 	}
 
 	public ClienteDashboardDTO(Integer idPersona, String nombreCompleto, double cupoTotalCredito,
-			double cupoAsignado, List<ResumenParejaDTO> parejas) {
+			double cupoAsignado, double gastoTotal, double cupoDisponibleTotal, List<ResumenParejaDTO> parejas) {
 		this.idPersona = idPersona;
 		this.nombreCompleto = nombreCompleto;
 		this.cupoTotalCredito = cupoTotalCredito;
 		this.cupoAsignado = cupoAsignado;
+		this.gastoTotal = gastoTotal;
+		this.cupoDisponibleTotal = cupoDisponibleTotal;
 		this.parejas = parejas;
 	}
 
@@ -61,5 +65,20 @@ public class ClienteDashboardDTO {
 	public void setParejas(List<ResumenParejaDTO> parejas) {
 		this.parejas = parejas;
 	}
+	
+	public double getGastoTotal() {
+		return gastoTotal;
+	}
 
+	public void setGastoTotal(double gastoTotal) {
+		this.gastoTotal = gastoTotal;
+	}
+
+	public double getCupoDisponibleTotal() {
+		return cupoDisponibleTotal;
+	}
+
+	public void setCupoDisponibleTotal(double cupoDisponibleTotal) {
+		this.cupoDisponibleTotal = cupoDisponibleTotal;
+	}
 }

@@ -17,6 +17,7 @@ import co.edu.unbosque.backProyectoPoligamia.model.ClientePareja;
 import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteParejaRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteRepository;
+import co.edu.unbosque.backProyectoPoligamia.repository.CompraRepository;
 
 @Service
 public class ClienteService {
@@ -26,6 +27,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteParejaRepository clienteParejaRepo;
+	
+	@Autowired
+	private CompraRepository compraRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -82,18 +86,24 @@ public class ClienteService {
 		for (ClientePareja clientePareja : relaciones) {
 			Pareja pareja = clientePareja.getPareja();
 
+			Double gasto = compraRepo.sumMontoByParejaIdPersona(pareja.getIdPersona());
+			double gastoAcumulado = gasto != null ? gasto : 0.0;
+			double cupoDisponiblePareja = pareja.getCupoCredito() - gastoAcumulado;
+
 			resumenParejas.add(new ResumenParejaDTO(pareja.getIdPersona(),
 					nombreCompleto(pareja.getPrimerNombre(), pareja.getSegundoNombre(),
 							pareja.getPrimerApellido(), pareja.getSegundoApellido()),
-					pareja.getCupoCredito()));
+					pareja.getCupoCredito(), gastoAcumulado, cupoDisponiblePareja));
 		}
-		
+
 		double cupoAsignado = resumenParejas.stream().mapToDouble(ResumenParejaDTO::getCupoCredito).sum();
+		double gastoTotal = resumenParejas.stream().mapToDouble(ResumenParejaDTO::getGastoAcumulado).sum();
+		double cupoDisponibleTotal = cliente.getCupoTotalCredito() - gastoTotal;
 
 		return new ClienteDashboardDTO(
 				cliente.getIdPersona(), nombreCompleto(cliente.getPrimerNombre(), cliente.getSegundoNombre(),
 						cliente.getPrimerApellido(), cliente.getSegundoApellido()),
-				cliente.getCupoTotalCredito(), cupoAsignado, resumenParejas);
+				cliente.getCupoTotalCredito(), cupoAsignado, gastoTotal, cupoDisponibleTotal, resumenParejas);
 	}
 
 	public int update(int idPersona, ClienteDTO dto) {

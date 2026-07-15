@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import co.edu.unbosque.backProyectoPoligamia.dto.GastoCupoDTO;
 import co.edu.unbosque.backProyectoPoligamia.dto.ParejaDTO;
 import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
+import co.edu.unbosque.backProyectoPoligamia.repository.CompraRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ParejaRepository;
 
 @Service
@@ -18,6 +20,8 @@ public class ParejaService {
 
 	@Autowired
 	private ParejaRepository parejaRepo;
+	@Autowired
+	private CompraRepository compraRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -92,4 +96,5 @@ public class ParejaService {
 		return 1;
 	}
 
+	
 }

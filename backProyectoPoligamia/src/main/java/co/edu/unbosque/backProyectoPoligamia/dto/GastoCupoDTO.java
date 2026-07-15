@@ -1,21 +1,17 @@
 package co.edu.unbosque.backProyectoPoligamia.dto;
 
-public class ResumenParejaDTO {
-
+public class GastoCupoDTO {
 
 	private Integer idPersona;
-	private String nombreCompleto;
 	private double cupoCredito;
 	private double gastoAcumulado;
 	private double cupoDisponible;
 
-	public ResumenParejaDTO() {
+	public GastoCupoDTO() {
 	}
 
-	public ResumenParejaDTO(Integer idPersona, String nombreCompleto, double cupoCredito,
-			double gastoAcumulado, double cupoDisponible) {
+	public GastoCupoDTO(Integer idPersona, double cupoCredito, double gastoAcumulado, double cupoDisponible) {
 		this.idPersona = idPersona;
-		this.nombreCompleto = nombreCompleto;
 		this.cupoCredito = cupoCredito;
 		this.gastoAcumulado = gastoAcumulado;
 		this.cupoDisponible = cupoDisponible;
@@ -29,14 +25,6 @@ public class ResumenParejaDTO {
 		this.idPersona = idPersona;
 	}
 
-	public String getNombreCompleto() {
-		return nombreCompleto;
-	}
-
-	public void setNombreCompleto(String nombreCompleto) {
-		this.nombreCompleto = nombreCompleto;
-	}
-
 	public double getCupoCredito() {
 		return cupoCredito;
 	}
@@ -44,6 +32,7 @@ public class ResumenParejaDTO {
 	public void setCupoCredito(double cupoCredito) {
 		this.cupoCredito = cupoCredito;
 	}
+
 	public double getGastoAcumulado() {
 		return gastoAcumulado;
 	}
