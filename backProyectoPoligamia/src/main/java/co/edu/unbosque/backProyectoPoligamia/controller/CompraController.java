@@ -54,6 +54,11 @@ public class CompraController {
 		return ResponseEntity.ok(found);
 	}
 
+	@GetMapping("/reciente")
+	public ResponseEntity<?> getReciente() {
+		return ResponseEntity.ok(compraServ.getHistorialReciente());
+	}
+	
 	@PutMapping(path = "/update/{idCompra}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> update(@PathVariable int idCompra, @RequestBody CompraDTO compraDTO) {
 		int estado = compraServ.update(idCompra, compraDTO);

@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.backProyectoPoligamia.dto.CompraDTO;
+import co.edu.unbosque.backProyectoPoligamia.dto.CompraHistorialDTO;
 import co.edu.unbosque.backProyectoPoligamia.model.Almacen;
 import co.edu.unbosque.backProyectoPoligamia.model.Compra;
 import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
 import co.edu.unbosque.backProyectoPoligamia.repository.AlmacenRepository;
+import co.edu.unbosque.backProyectoPoligamia.repository.AutorizacionSobrecupoRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.CompraRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ParejaRepository;
 
@@ -27,6 +29,8 @@ public class CompraService {
 
 	@Autowired
 	private AlmacenRepository almacenRepo;
+	@Autowired
+	private AutorizacionSobrecupoRepository autorizacionRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -65,10 +69,41 @@ public class CompraService {
 	public CompraDTO getById(int idCompra) {
 		Optional<Compra> found = compraRepo.findById(idCompra);
 		if (found.isEmpty()) {
-			return null; 
+			return null;
 		}
 		return modelMapper.map(found.get(), CompraDTO.class);
 	}
+
+	public List<CompraHistorialDTO> getHistorialReciente() {
+		List<CompraHistorialDTO> resultado = new ArrayList<>();
+
+		List<Compra> compras = compraRepo.findAllByOrderByFechaDescHoraDesc();
+		Pareja pareja;
+			for (Compra compra : compras) {
+				pareja = compra.getPareja();
+				
+				String estado;
+				if (compra.getSobrecupo() == 'S' && !autorizacionRepo.existsByCompraIdCompra(compra.getIdCompra())) {
+					estado = "Sobrecupo pendiente";
+				} else {
+					estado = "Aprobada";
+				}
+
+				resultado.add(new CompraHistorialDTO(
+						compra.getIdCompra(),
+						nombreCompleto(pareja.getPrimerNombre(), pareja.getSegundoNombre(), pareja.getPrimerApellido(), pareja.getSegundoApellido()),
+						compra.getAlmacen().getNombre(),
+						compra.getFecha(),
+						compra.getHora(),
+						compra.getMonto(),
+						estado));
+			}
+
+			return resultado;
+	}
+
+	
+
 
 	public int update(int idCompra, CompraDTO dto) {
 		Optional<Compra> found = compraRepo.findById(idCompra);
@@ -91,5 +126,20 @@ public class CompraService {
 			return 0;
 		}
 		return 1;
+	}
+	
+	public String nombreCompleto(String primerNombre, String segundoNombre, String primerApellido,
+			String segundoApellido) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(primerNombre);
+
+		if (segundoNombre != null && !segundoNombre.isBlank()) {
+			sb.append(" ").append(segundoNombre);
+		}
+		sb.append(" ").append(primerApellido);
+		if (segundoApellido != null && !segundoApellido.isBlank()) {
+			sb.append(" ").append(segundoApellido);
+		}
+		return sb.toString();
 	}
 }

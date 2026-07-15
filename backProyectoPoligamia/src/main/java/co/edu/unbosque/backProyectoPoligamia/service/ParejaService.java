@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.backProyectoPoligamia.dto.ParejaDTO;
+import co.edu.unbosque.backProyectoPoligamia.dto.ParejaListaDTO;
 import co.edu.unbosque.backProyectoPoligamia.model.Cliente;
 import co.edu.unbosque.backProyectoPoligamia.model.ClientePareja;
 import co.edu.unbosque.backProyectoPoligamia.model.ClienteParejaId;
@@ -17,6 +18,7 @@ import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteParejaRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ClienteRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ParejaRepository;
+import co.edu.unbosque.backProyectoPoligamia.repository.RestriccionRepository;
 
 @Service
 public class ParejaService {
@@ -27,6 +29,8 @@ public class ParejaService {
 	private ClienteRepository clienteRepo;
 	@Autowired
 	private ClienteParejaRepository clienteParejaRepo;
+	@Autowired
+	private RestriccionRepository restriccionRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
