@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import co.edu.unbosque.backProyectoPoligamia.dto.GastoCupoDTO;
 import co.edu.unbosque.backProyectoPoligamia.dto.ParejaDTO;
+import co.edu.unbosque.backProyectoPoligamia.model.Cliente;
+import co.edu.unbosque.backProyectoPoligamia.model.ClientePareja;
+import co.edu.unbosque.backProyectoPoligamia.model.ClienteParejaId;
 import co.edu.unbosque.backProyectoPoligamia.model.Pareja;
-import co.edu.unbosque.backProyectoPoligamia.repository.CompraRepository;
+import co.edu.unbosque.backProyectoPoligamia.repository.ClienteParejaRepository;
+import co.edu.unbosque.backProyectoPoligamia.repository.ClienteRepository;
 import co.edu.unbosque.backProyectoPoligamia.repository.ParejaRepository;
 
 @Service
@@ -21,7 +24,9 @@ public class ParejaService {
 	@Autowired
 	private ParejaRepository parejaRepo;
 	@Autowired
-	private CompraRepository compraRepo;
+	private ClienteRepository clienteRepo;
+	@Autowired
+	private ClienteParejaRepository clienteParejaRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -32,10 +37,23 @@ public class ParejaService {
 	public int create(ParejaDTO dto) {
 		Optional<Pareja> found = parejaRepo.findByCedula(dto.getCedula());
 		if (found.isEmpty()) {
+			Integer idClienteAutenticado = dto.getClienteParejas().getFirst().getCliente().getIdPersona();
+			Optional<Cliente> clienteOpt = clienteRepo.findById(idClienteAutenticado);
+			if (clienteOpt.isEmpty()) {
+				return 2;
+			}
+			Cliente cliente = clienteOpt.get();
+
 			Pareja entity = modelMapper.map(dto, Pareja.class);
 			entity.setIdPersona(null);
+			entity.setClienteParejas(null);
 			entity.setContrasenia(passwordEncoder.encode(dto.getContrasenia()));
-			parejaRepo.save(entity);
+			Pareja parejaSaved = parejaRepo.save(entity);
+
+			ClienteParejaId cpId = new ClienteParejaId(cliente.getIdPersona(), parejaSaved.getIdPersona());
+			ClientePareja cp = new ClientePareja(cpId, cliente, parejaSaved);
+			clienteParejaRepo.save(cp);
+
 			return 0;
 		}
 		return 1;

@@ -28,11 +28,19 @@ public class ParejaController {
 	@PostMapping(path = "/createjson", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> createWithJSON(@RequestBody ParejaDTO nuevaPareja) {
 		int estado = parejaServ.create(nuevaPareja);
-		return estado == 0
-				? ResponseEntity.status(HttpStatus.CREATED).body("Pareja creada exitosamente")
-				: ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+		switch (estado) {
+			case 0:
+				return ResponseEntity.status(HttpStatus.CREATED).body("Pareja creada exitosamente");
+			case 1:
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
 						.body("Error al crear la pareja, la cédula ya está registrada");
+			case 2:
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente autenticado no encontrado");
+			default:
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+		}
 	}
+	
 
 	@GetMapping("/getall")
 	public ResponseEntity<?> getAll() {
